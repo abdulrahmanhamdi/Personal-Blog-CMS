@@ -8,18 +8,24 @@ import Home from './pages/Home';
 import Post from './pages/Post';
 import PrivateRoute from './routes/PrivateRoute';
 import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import About from './pages/About';
 
 const App: React.FC = () => {
   return (
     <div>
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/post/:id" element={<Post />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/admin" element={<PrivateRoute><AdminPanel /></PrivateRoute>} />
-      </Routes>
+      <main>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/post/:id" element={<Post />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/admin" element={<PrivateRoute><AdminPanel /></PrivateRoute>} />
+        </Routes>
+      </main>
+      <Footer />
     </div>
   );
 };

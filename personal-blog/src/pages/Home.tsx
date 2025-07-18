@@ -3,17 +3,19 @@ import React, { useState, useEffect } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 import { Link } from 'react-router-dom';
+import { Timestamp } from 'firebase/firestore';
 
 interface Post {
   id: string;
   title: string;
   content: string;
-  createdAt: any; // يمكن تحسينه باستخدام Timestamp إذا لزم الأمر
+  createdAt: Timestamp;
 }
 
 const Home: React.FC = () => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -24,8 +26,9 @@ const Home: React.FC = () => {
           ...doc.data(),
         })) as Post[];
         setPosts(postsData);
-      } catch (err) {
+      } catch (err: any) {
         console.error('Error fetching posts:', err);
+        setError('Failed to load posts. Please try again later.');
       } finally {
         setIsLoading(false);
       }
@@ -41,6 +44,8 @@ const Home: React.FC = () => {
           <div className="loading-spinner">
             <span className="spinner-border" role="status" aria-hidden="true"></span>
           </div>
+        ) : error ? (
+          <p className="error">{error}</p>
         ) : posts.length === 0 ? (
           <p className="text-center">No posts available.</p>
         ) : (
@@ -49,7 +54,11 @@ const Home: React.FC = () => {
               <div key={post.id} className="post-item">
                 <h5>{post.title}</h5>
                 <p>{post.content.substring(0, 100)}...</p>
-                <small>Posted on: {new Date(post.createdAt.seconds * 1000).toLocaleString()}</small>
+                <small>
+                  Posted on: {post.createdAt?.seconds
+                    ? new Date(post.createdAt.seconds * 1000).toLocaleString()
+                    : 'Unknown date'}
+                </small>
                 <div className="mt-2">
                   <Link to={`/post/${post.id}`} className="link">Read More</Link>
                 </div>
